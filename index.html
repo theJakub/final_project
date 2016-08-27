@@ -32,7 +32,7 @@
 		<div class="row">
 			<div class="text2 col-md-6 col-xs-12">Time Signature</div>		
 			<div class="timeSigBox col-md-6 col-xs-12">
-				<select id="timeSigTop" onchange="timeSigTop = this.selectedIndex;">
+				<select id="timeSigTop" onchange="onChangeSignature();">
 					<option>1</option>
 					<option>2</option>
 					<option>3</option>
@@ -50,7 +50,7 @@
 					<option>15</option>
 				</select>
 				/
-				<select id="timeSigBot"onchange="bottomTime(this.selectedIndex);"> <!-- timeSigBot = this.selectedIndex; -->
+				<select id="timeSigBot"onchange="onChangeSignature();"> <!-- timeSigBot = this.selectedIndex; -->
 					<option>4</option>
 					<option>8</option>
 				</select>
@@ -69,17 +69,22 @@
 				</select>
 			</div>
 			<div class="text2 col-md-6 col-xs-12">Subdivision
-				<select id="subdivision" onchange="subdiv = this.selectedIndex;"><!-- class="form-control" this makes it too wide, but it looks nice and is taller -->
+				<select id="subdivision4" onchange="subdiv = this.selectedIndex;">
+				<!-- class="form-control" this makes it too wide, but it looks nice and is taller -->
 					<option>Quarter Notes</option>
 					<option>Eighth Notes</option>
 					<option>Sixteenth Notes</option>
 					<option>Triplets</option>
-					<option>2 + 3</option>
-					<option>3 + 2</option>
-					<option>2 + 2 + 3</option>
-					<option>3 + 2 + 2</option>
-					<option>2 + 3 + 2</option>
-					<option>3 + 3 + 1</option>
+				</select>
+				<select id="subdivision85" onchange="subdiv = this.selectedIndex;">
+					<option id="five1">2 + 3</option>
+					<option id="five2">3 + 2</option>
+				</select>
+				<select id="subdivision87">
+					<option id="seven1">2 + 2 + 3</option>
+					<option id="seven2">3 + 2 + 2</option>
+					<option id="seven3">2 + 3 + 2</option>
+					<option id="seven4">3 + 3 + 1</option>
 				</select>
 			</div>
 		</div>
