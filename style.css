@@ -5,6 +5,10 @@ h1 {
 	font-family: monospace;
 }
 
+.container-fluid {
+	border-bottom: 2px solid cornflowerblue;
+}
+
 .container {
 	margin-top: 50px;
 }
@@ -44,6 +48,14 @@ h1 {
 }
 
 #subdivision87 {
+	display: none;
+}
+
+#subdivision88 {
+	display: none;
+}
+
+#subdivision8na {
 	display: none;
 }
 

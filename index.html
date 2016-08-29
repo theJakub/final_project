@@ -60,7 +60,7 @@
 		<br>
 		<div class="row">
 			<div class="text2 col-md-6 col-xs-12">Sound Style
-				<select id="soundSelector" onchange="beatSound = this.selectedIndex;">
+				<select id="soundSelector">
 					<option>Standard</option>
 					<option>Smooth</option>
 					<option>Sharp</option>
@@ -69,22 +69,35 @@
 				</select>
 			</div>
 			<div class="text2 col-md-6 col-xs-12">Subdivision
-				<select id="subdivision4" onchange="subdiv = this.selectedIndex;">
+				<select id="subdivision4">
 				<!-- class="form-control" this makes it too wide, but it looks nice and is taller -->
 					<option>Quarter Notes</option>
 					<option>Eighth Notes</option>
 					<option>Sixteenth Notes</option>
 					<option>Triplets</option>
 				</select>
-				<select id="subdivision85" onchange="subdiv = this.selectedIndex;">
-					<option id="five1">2 + 3</option>
-					<option id="five2">3 + 2</option>
+				<select id="subdivision85">
+					<option>3 + 2</option>
+					<option>2 + 3</option>
 				</select>
 				<select id="subdivision87">
-					<option id="seven1">2 + 2 + 3</option>
-					<option id="seven2">3 + 2 + 2</option>
-					<option id="seven3">2 + 3 + 2</option>
-					<option id="seven4">3 + 3 + 1</option>
+					<option>3 + 2 + 2</option>
+					<option>2 + 2 + 3</option>
+					<option>3 + 4</option>
+					<option>4 + 3</option>
+				</select>
+				<select id="subdivision88">
+					<option>3 + 3 + 2</option>
+					<option>2 + 3 + 3</option>
+				</select>
+				<select id="subdivision89">
+					<option>3 + 3 + 3</option>
+					<option>4 + 5</option>
+					<option>5 + 4</option>
+				</select>
+
+				<select id="subdivision8na">
+					<option>N/A</option>
 				</select>
 			</div>
 		</div>

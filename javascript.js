@@ -1,140 +1,108 @@
 
-var audio = new window.AudioContext();
-var tempo = document.getElementById("showTempo").innerHTML;
-var interval;
-var started = false;
-var timeSigTop = 3;
-var beatPerMeasure;
-var timeSigBot = 0;
-var beatSound = 0;
-var beatCount;
-var subdiv = 0;
-var subdivide;
-var speed;
+var audio = new window.AudioContext(); 													// Gives the ability to make sound with the window
+var interval;																			// For starting and stoping the setInterval function
+var started = false;																	// For the event function to know whether to start or stop the metronome
+var beatCount;																			// To keep track of the beats for the sound and count display
 
-function onChangeSignature() {
-	document.getElementById("subdivision4").style.display = "none";
+function onChangeSignature() {															// Switches the subdivision display based on the time signature chosen
+	document.getElementById("subdivision4").style.display = "none";						// The logic checks the time signature and changes the display accordingly
 	document.getElementById("subdivision85").style.display = "none";
 	document.getElementById("subdivision87").style.display = "none";
+	document.getElementById("subdivision88").style.display = "none";
+
+	document.getElementById("subdivision8na").style.display = "none";
+
 	if (document.getElementById("timeSigBot").selectedIndex === 1) {
 		document.getElementById("meter").innerHTML = "8th =";
+
 		if (document.getElementById("timeSigTop").selectedIndex === 4) {
     		document.getElementById("subdivision85").style.display = "inline";
+
 		} else if (document.getElementById("timeSigTop").selectedIndex === 6) {
     		document.getElementById("subdivision87").style.display = "inline";
+
+		} else if (document.getElementById("timeSigTop").selectedIndex === 7) {
+			document.getElementById("subdivision88").style.display = "inline";
+
 		}
+
+		else {
+			document.getElementById("subdivision8na").style.display = "inline";
+		}
+
 	} else {
 		document.getElementById("meter").innerHTML = "4th =";
 		document.getElementById("subdivision4").style.display = "inline";
 	}
 }
 
+function createOsc4(notesPerMeasure, beatPerMeasure, beatSound) {							// This is the function to control the metronome when 4 is the meter chosen
+	var gain = audio.createGain();															// Uses the audioContext to make a controller for the sound oscillator
+	var osc = audio.createOscillator();														// Uses the audioContext to make the sound oscillator
 
-// function topTime(index) {
-// 	if (index == 4) {
-// 		document.getElementById("five1").removeAttribute("disabled");
-// 		document.getElementById("five1").setAttribute("selected","selected");
-// 		document.getElementById("five2").removeAttribute("disabled");
-// 		document.getElementById("seven1").setAttribute("disabled", "disabled");
-// 		document.getElementById("seven2").setAttribute("disabled", "disabled");
-// 		document.getElementById("seven3").setAttribute("disabled", "disabled");
-// 		document.getElementById("seven4").setAttribute("disabled", "disabled");
-// 	} else if (index == 6) {
-// 		document.getElementById("five1").setAttribute("disabled", "disabled");
-// 		document.getElementById("five2").setAttribute("disabled", "disabled");
-// 		document.getElementById("seven1").removeAttribute("disabled");
-// 		document.getElementById("seven1").setAttribute("selected","selected");
-// 		document.getElementById("seven2").removeAttribute("disabled");
-// 		document.getElementById("seven3").removeAttribute("disabled");
-// 		document.getElementById("seven4").removeAttribute("disabled");
-// 	}
-// }
+	gain.connect(audio.destination);														// Sets the output
+    gain.gain.setValueAtTime(0, audio.currentTime);											// Keeps track of when the sound gets started
+    gain.gain.linearRampToValueAtTime(1, audio.currentTime + 1 / 1000);						// Quickly fades the sound in
+    gain.gain.linearRampToValueAtTime(0, audio.currentTime + 50 / 1000);					// Fades the sound out when finished. Makes for cleaner listening
 
-// function bottomTime(index) {
-//   	if (index == 1) {
-//   		timeSigBot = index;
-//   		document.getElementById("meter").innerHTML = "8th =";
-//     	document.getElementById("subdivision4").style.display = "none";
-//     	document.getElementById("subdivision8").style.display = "inline";
-// 	} else {
-// 		timeSigBot = index;
-// 		document.getElementById("meter").innerHTML = "4th =";
-//     	document.getElementById("subdivision8").style.display = "none";
-//     	document.getElementById("subdivision4").style.display = "inline";
-// 	}
-// }
-
-
-
-
-function createOsc4(subdivide, beatPerMeasure) {
-	var gain = audio.createGain();
-	var osc = audio.createOscillator();
-
-	gain.connect(audio.destination);
-    gain.gain.setValueAtTime(0, audio.currentTime);
-    gain.gain.linearRampToValueAtTime(1, audio.currentTime + 1 / 1000);
-    gain.gain.linearRampToValueAtTime(0, audio.currentTime + 50 / 1000);
-
-    if (beatSound === 4) {
-    	debugger;
-		if (beatCount % beatPerMeasure === 0) {
+    if (beatSound === 4) { 																	// Logic is to account for the subdivisions and beatsPerMeasure and   											
+		if (beatCount % notesPerMeasure === 0) {											// makes sure the correct sound is played and correct count is displayed
 			document.getElementById("overlay").innerHTML = "1";
 			osc.frequency.value = 120;
 			osc.type = "sine";
-		} else if (beatCount % beatPerMeasure === subdivide * (1/ beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (1/ beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "2";
 			osc.frequency.value = 220;
 			osc.type = "sawtooth";
-		} else if (beatCount % beatPerMeasure === subdivide * (2/ beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (2/ beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "3";
 			osc.frequency.value = 120;
 			osc.type = "sine";
-		} else if (beatCount % beatPerMeasure === subdivide * (3/ beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (3/ beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "4";
 			osc.frequency.value = 220;
 			osc.type = "sawtooth";
-		} else if (beatCount % beatPerMeasure === subdivide * (4/ beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (4/ beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "5";
 			osc.frequency.value = 120;
 			osc.type = "sine";
-		} else if (beatCount % beatPerMeasure === subdivide * (5/ beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (5/ beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "6";
 			osc.frequency.value = 220;
 			osc.type = "sawtooth";
-		} else if (beatCount % beatPerMeasure === subdivide * (6/ beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (6/ beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "7";
 			osc.frequency.value = 120;
 			osc.type = "sine";
-		} else if (beatCount % beatPerMeasure === subdivide * (7/ beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (7/ beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "8";
 			osc.frequency.value = 220;
 			osc.type = "sawtooth";
-		} else if (beatCount % beatPerMeasure === subdivide * (8/ beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (8/ beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "9";
 			osc.frequency.value = 120;
 			osc.type = "sine";
-		} else if (beatCount % beatPerMeasure === subdivide * (9 / beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (9 / beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "10";
 			osc.frequency.value = 220;
 			osc.type = "sawtooth";
-		} else if (beatCount % subdivide === subdivide * (10 / beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (10 / beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "11";
 			osc.frequency.value = 120;
 			osc.type = "sine";
-		} else if (beatCount % subdivide === subdivide * (11 / beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (11 / beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "12";
 			osc.frequency.value = 220;
 			osc.type = "sawtooth";
-		} else if (beatCount % subdivide === subdivide * (12 / beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (12 / beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "13";
 			osc.frequency.value = 120;
 			osc.type = "sine";
-		} else if (beatCount % subdivide === subdivide * (13 / beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (13 / beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "14";
 			osc.frequency.value = 220;
 			osc.type = "sawtooth";
-		} else if (beatCount % subdivide === subdivide * (14 / beatPerMeasure)) {
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (14 / beatPerMeasure)) {
 			document.getElementById("overlay").innerHTML = "15";
 			osc.frequency.value = 120;
 			osc.type = "sine";
@@ -144,10 +112,56 @@ function createOsc4(subdivide, beatPerMeasure) {
 		}
 
 	} else {
-		debugger;
-		document.getElementById("overlay").innerHTML = Math.floor(beatCount % subdivide) + 1;
+		if (beatCount % notesPerMeasure === 0) {											// Logic for the count display and pitch for normal metronome sounds
+			document.getElementById("overlay").innerHTML = "1";
+			osc.frequency.value = 440;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (1/ beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "2";
+			osc.frequency.value = 330;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (2/ beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "3";
+			osc.frequency.value = 330;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (3/ beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "4";
+			osc.frequency.value = 330;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (4/ beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "5";
+			osc.frequency.value = 330;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (5/ beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "6";
+			osc.frequency.value = 330;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (6/ beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "7";
+			osc.frequency.value = 330;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (7/ beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "8";
+			osc.frequency.value = 330;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (8/ beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "9";
+			osc.frequency.value = 330;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (9 / beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "10";
+			osc.frequency.value = 330;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (10 / beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "11";
+			osc.frequency.value = 330;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (11 / beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "12";
+			osc.frequency.value = 330;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (12 / beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "13";
+			osc.frequency.value = 330;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (13 / beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "14";
+			osc.frequency.value = 330;
+		} else if (beatCount % notesPerMeasure === notesPerMeasure * (14 / beatPerMeasure)) {
+			document.getElementById("overlay").innerHTML = "15";
+			osc.frequency.value = 330;			
+		} else {
+			osc.frequency.value = 220;
+		}
 
-		if (beatSound === 0) {
+		if (beatSound === 0) {																// Checks the selected sound
 			osc.type = "triangle";
 		} else if (beatSound === 1) {
 			osc.type = "sine";
@@ -156,31 +170,20 @@ function createOsc4(subdivide, beatPerMeasure) {
 		} else if (beatSound === 3) {
 			osc.type = "sawtooth";
 		}
-
-		if (beatCount % subdivide === 0) {
-			osc.frequency.value = 440;
-		} else {
-			osc.frequency.value = 220;
-		}
-
 	}
 
-	osc.connect(gain);
-	osc.start(0);
+	osc.connect(gain);																		// Connects the oscillator to the gain control
+	osc.start(0);																			// Starts the sound
 
-	setTimeout(function() {
+	setTimeout(function() {																	// Stops the sound after 0.050 seconds
         osc.stop(0);
-        osc.disconnect(gain);
+        osc.disconnect(gain);																// Disconnect the gain and oscillator so new ones can be created
         gain.disconnect(audio.destination);
     }, 50);
-    beatCount += 1;
+    beatCount += 1;																			// Count the beats played
 } // end createOsc4()
 
-
-
-
-
-function createOsc8(beatPerMeasure, timeSigBot) {
+function createOsc8(beatPerMeasure, beatSound) {											// Function for standard counts in 8 meter
 	var gain = audio.createGain();
 	var osc = audio.createOscillator();
 
@@ -189,7 +192,11 @@ function createOsc8(beatPerMeasure, timeSigBot) {
     gain.gain.linearRampToValueAtTime(1, audio.currentTime + 1 / 1000);
     gain.gain.linearRampToValueAtTime(0, audio.currentTime + 50 / 1000);
 
-	document.getElementById("overlay").innerHTML = (beatCount % beatPerMeasure) + 1;
+	document.getElementById("overlay").innerHTML = (beatCount % beatPerMeasure) + 1;		// Unlike 4 meter, we display every counted beat making the display logic much simpler
+	
+	if (beatCount === beatPerMeasure) {														// reset beatCount after each measure
+		beatCount = 0;
+	}
 
 	if (beatSound === 4) {
 
@@ -218,7 +225,7 @@ function createOsc8(beatPerMeasure, timeSigBot) {
 
 		if (beatCount % beatPerMeasure === 0) {
 			osc.frequency.value = 440;
-		} else if (beatCount % beatPerMeasure === 3) {
+		} else if (beatCount % 3 === 0) {
 			osc.frequency.value = 330;
 		} else {
 			osc.frequency.value = 220;
@@ -238,72 +245,358 @@ function createOsc8(beatPerMeasure, timeSigBot) {
     beatCount += 1;
 } // end createOsc8()
 
+function createOsc84(beatPerMeasure, beatSound) {											// Function for 4/8 timesignature
+	var gain = audio.createGain();
+	var osc = audio.createOscillator();
+
+	gain.connect(audio.destination);
+    gain.gain.setValueAtTime(0, audio.currentTime);
+    gain.gain.linearRampToValueAtTime(1, audio.currentTime + 1 / 1000);
+    gain.gain.linearRampToValueAtTime(0, audio.currentTime + 50 / 1000);
+
+	document.getElementById("overlay").innerHTML = (beatCount % beatPerMeasure) + 1;		// Unlike 4 meter, we display every counted beat making the display logic much simpler
+
+	if (beatSound === 4) {
+
+		if (beatCount % beatPerMeasure === 0) {
+			osc.frequency.value = 110;
+			osc.type = "sine";
+		} else if (beatCount % beatPerMeasure === 2) {
+			osc.frequency.value = 220;
+			osc.type = "sawtooth";
+		} else {
+			osc.frequency.value = 880;
+			osc.type = "triangle";
+		}
+
+	} else {
+
+		if (beatSound === 0) {
+			osc.type = "triangle";
+		} else if (beatSound === 1) {
+			osc.type = "sine";
+		} else if (beatSound === 2) {
+			osc.type = "square";
+		} else if (beatSound === 3) {
+			osc.type = "sawtooth";
+		}
+
+		if (beatCount % beatPerMeasure === 0) {
+			osc.frequency.value = 440;
+		} else if (beatCount % 2 === 0) {
+			osc.frequency.value = 330;
+		} else {
+			osc.frequency.value = 220;
+		}
+	}
+
+	osc.connect(gain);
+	osc.start(0);
+
+	setTimeout(function() {
+        osc.stop(0);
+        osc.disconnect(gain);
+       	gain.disconnect(audio.destination);
+    }, 50);
+    beatCount += 1;
+} // end createOsc84()
+
+function createOsc857(beatPerMeasure, beatSound) {											// Function for 5/8 in 2 + 3 count and 7/8 with 2 + 2 + 3 count
+	var gain = audio.createGain();
+	var osc = audio.createOscillator();
+
+	gain.connect(audio.destination);
+    gain.gain.setValueAtTime(0, audio.currentTime);
+    gain.gain.linearRampToValueAtTime(1, audio.currentTime + 1 / 1000);
+    gain.gain.linearRampToValueAtTime(0, audio.currentTime + 50 / 1000);
+
+	document.getElementById("overlay").innerHTML = (beatCount % beatPerMeasure) + 1;		// Unlike 4 meter, we display every counted beat making the display logic much simpler
+	
+	if (beatCount === beatPerMeasure) {														// Reset beatCount after each measure
+		beatCount = 0;
+	}
+
+	if (beatSound === 4) {
+		if (beatCount % beatPerMeasure === 0) {
+			osc.frequency.value = 110;
+			osc.type = "sine";
+		} else if (beatCount % 2 === 0 && beatCount < (beatPerMeasure - 2)) {
+			osc.frequency.value = 220;
+			osc.type = "sawtooth";
+		} else {
+			osc.frequency.value = 880;
+			osc.type = "triangle";
+		}
+
+	} else {
+
+		if (beatSound === 0) {
+			osc.type = "triangle";
+		} else if (beatSound === 1) {
+			osc.type = "sine";
+		} else if (beatSound === 2) {
+			osc.type = "square";
+		} else if (beatSound === 3) {
+			osc.type = "sawtooth";
+		}
+
+		if (beatCount % beatPerMeasure === 0) {
+			osc.frequency.value = 440;
+		} else if (beatCount % 2 === 0 && beatCount < (beatPerMeasure - 2)) {
+			osc.frequency.value = 330;
+		} else {
+			osc.frequency.value = 220;
+		}
+	}
+
+	osc.connect(gain);
+	osc.start(0);
+
+	setTimeout(function() {
+        osc.stop(0);
+        osc.disconnect(gain);
+       	gain.disconnect(audio.destination);
+    }, 50);
+    beatCount += 1;
+} // end createOsc857()
+
+function createOsc87(beatPerMeasure, beatSound) {											// Function all other 7/8 subdivisions
+	var gain = audio.createGain();
+	var osc = audio.createOscillator();
+
+	gain.connect(audio.destination);
+    gain.gain.setValueAtTime(0, audio.currentTime);
+    gain.gain.linearRampToValueAtTime(1, audio.currentTime + 1 / 1000);
+    gain.gain.linearRampToValueAtTime(0, audio.currentTime + 50 / 1000);
+
+	document.getElementById("overlay").innerHTML = (beatCount % beatPerMeasure) + 1;		// Unlike 4 meter, we display every counted beat making the display logic much simpler
+	
+	if (beatCount === beatPerMeasure) {														// Reset beatCount after each measure
+		beatCount = 0;
+	}
+
+	if (beatSound === 4) {																	// Logic for drum sounds
+
+		if (document.getElementById("subdivision87").selectedIndex === 0) {					// 3 + 2 + 2
+
+			if (beatCount % beatPerMeasure === 0) {
+				osc.frequency.value = 110;
+				osc.type = "sine";
+			} else if (beatCount % 2 === 1 && beatCount > 2) {
+				osc.frequency.value = 220;
+				osc.type = "sawtooth";
+			} else {
+				osc.frequency.value = 880;
+				osc.type = "triangle";
+			}
+
+		} else if (document.getElementById("subdivision87").selectedIndex === 2) {			// 3 + 4
+
+			if (beatCount % beatPerMeasure === 0) {
+				osc.frequency.value = 110;
+				osc.type = "sine";
+			} else if (beatCount === 3) {
+				osc.frequency.value = 220;
+				osc.type = "sawtooth";
+			} else {
+				osc.frequency.value = 880;
+				osc.type = "triangle";
+			}
+
+		} else {
+
+			if (beatCount % beatPerMeasure === 0) {											// 4 + 3
+				osc.frequency.value = 110;
+				osc.type = "sine";
+			} else if (beatCount === 4) {
+				osc.frequency.value = 220;
+				osc.type = "sawtooth";
+			} else {
+				osc.frequency.value = 880;
+				osc.type = "triangle";
+			}
+		}
+
+	} else {																				// Metronome sounds
+
+		if (beatSound === 0) {
+			osc.type = "triangle";
+		} else if (beatSound === 1) {
+			osc.type = "sine";
+		} else if (beatSound === 2) {
+			osc.type = "square";
+		} else if (beatSound === 3) {
+			osc.type = "sawtooth";
+		}
+
+		if (document.getElementById("subdivision87").selectedIndex === 0) {					// 3 + 2 + 2
+			
+			if (beatCount % beatPerMeasure === 0) {
+				osc.frequency.value = 440;
+			} else if (beatCount % 2 === 1 && beatCount > 2) {
+				osc.frequency.value = 330;
+			} else {
+				osc.frequency.value = 220;
+			}
+
+		} else if (document.getElementById("subdivision87").selectedIndex === 2){			// 3 + 4
+			
+			if (beatCount % beatPerMeasure === 0) {
+				osc.frequency.value = 440;
+			} else if (beatCount === 3) {
+				osc.frequency.value = 330;
+			} else {
+				osc.frequency.value = 220;
+			}
+
+		} else {																			// 4 + 3
+
+			if (beatCount % beatPerMeasure === 0) {
+				osc.frequency.value = 440;
+			} else if (beatCount === 4) {
+				osc.frequency.value = 330;
+			} else {
+				osc.frequency.value = 220;
+			}
+		}
+	}
+
+	osc.connect(gain);
+	osc.start(0);
+
+	setTimeout(function() {
+        osc.stop(0);
+        osc.disconnect(gain);
+       	gain.disconnect(audio.destination);
+    }, 50);
+    beatCount += 1;
+} // end createOsc87()
+
+function createOsc88(beatPerMeasure, beatSound) {											// Function for 8/8 with 2 + 3 + 3 count
+	var gain = audio.createGain();
+	var osc = audio.createOscillator();
+
+	gain.connect(audio.destination);
+    gain.gain.setValueAtTime(0, audio.currentTime);
+    gain.gain.linearRampToValueAtTime(1, audio.currentTime + 1 / 1000);
+    gain.gain.linearRampToValueAtTime(0, audio.currentTime + 50 / 1000);
+
+	document.getElementById("overlay").innerHTML = (beatCount % beatPerMeasure) + 1;		// Unlike 4 meter, we display every counted beat making the display logic much simpler
+	
+	if (beatCount === beatPerMeasure) {														// Reset beatCount after each measure
+		beatCount = 0;
+	}
+
+	if (beatSound === 4) {
+		if (beatCount % beatPerMeasure === 0) {
+			osc.frequency.value = 110;
+			osc.type = "sine";
+		} else if (beatCount === 2 || beatCount === 5) {
+			osc.frequency.value = 220;
+			osc.type = "sawtooth";
+		} else {
+			osc.frequency.value = 880;
+			osc.type = "triangle";
+		}
+
+	} else {
+
+		if (beatSound === 0) {
+			osc.type = "triangle";
+		} else if (beatSound === 1) {
+			osc.type = "sine";
+		} else if (beatSound === 2) {
+			osc.type = "square";
+		} else if (beatSound === 3) {
+			osc.type = "sawtooth";
+		}
+
+		if (beatCount % beatPerMeasure === 0) {
+			osc.frequency.value = 440;
+		} else if (beatCount === 2 || beatCount === 5) {
+			osc.frequency.value = 330;
+		} else {
+			osc.frequency.value = 220;
+		}
+	}
+
+	osc.connect(gain);
+	osc.start(0);
+
+	setTimeout(function() {
+        osc.stop(0);
+        osc.disconnect(gain);
+       	gain.disconnect(audio.destination);
+    }, 50);
+    beatCount += 1;
+} // end createOsc88()
 
 
 
-function startMetronome() {
-
-	beatPerMeasure = (timeSigTop + 1);
-
-	if (timeSigBot === 0) {
-		if (subdiv === 0) {
-			subdivide = beatPerMeasure;
+function startMetronome() {																	// Checks user inputs and starts the proper setTimeout function
+	var tempo = document.getElementById("showTempo").innerHTML;
+	var beatSound = document.getElementById("soundSelector").selectedIndex;
+	var speed;
+	var notesPerMeasure;
+	var beatPerMeasure = (document.getElementById("timeSigTop").selectedIndex) + 1;
+	if (document.getElementById("timeSigBot").selectedIndex === 0) {						// Logic for subdivisions for 4 meter time signatures 
+		if (document.getElementById("subdivision4").selectedIndex === 0) {
+			notesPerMeasure = beatPerMeasure;
 			speed = tempo;
-		} else if (subdiv === 1) {
-			subdivide = beatPerMeasure * 2;
+		} else if (document.getElementById("subdivision4").selectedIndex === 1) {
+			notesPerMeasure = beatPerMeasure * 2;
 			speed = tempo * 2;
-		} else if (subdiv === 2) {
-			subdivide = beatPerMeasure * 4;
+		} else if (document.getElementById("subdivision4").selectedIndex === 2) {
+			notesPerMeasure = beatPerMeasure * 4;
 			speed = tempo * 4;
-		} else if (subdiv === 3) {
-			subdivide = beatPerMeasure * 3;
+		} else if (document.getElementById("subdivision4").selectedIndex === 3) {
+			notesPerMeasure = beatPerMeasure * 3;
 			speed = tempo * 3;
 		}
 
-		beatCount = subdivide;
+		beatCount = notesPerMeasure;
 
-		interval = setInterval(createOsc4, 60000/speed, subdivide, beatPerMeasure);
+		interval = setInterval(createOsc4, 60000/speed, notesPerMeasure, beatPerMeasure, beatSound); // Function for 4 meter metronome passing it arguments for style
 
-	} else {
-		speed = tempo;
-		
-		beatCount = beatPerMeasure;
+	} else {																				// Logic to determine complex 8 meter based on subdivision and beatPerMeasure
+		beatCount = 0;
 
-		interval = setInterval(createOsc8, 60000/speed, beatPerMeasure, timeSigBot); 
-
+		if (beatPerMeasure === 4) {
+			interval = setInterval(createOsc84, 60000/tempo, beatPerMeasure, beatSound); 	// Function for 4/8 time signature
+		} else if (beatPerMeasure === 5 && document.getElementById("subdivision85").selectedIndex === 1 ||
+					beatPerMeasure === 7 && document.getElementById("subdivision87").selectedIndex === 1) {
+			interval = setInterval(createOsc857, 60000/tempo, beatPerMeasure, beatSound);	// Function for 5/8 time signature with 2 + 3 count and 7/8 with 2 + 2 + 3 count
+		} else if (beatPerMeasure === 7) {
+			interval = setInterval(createOsc87, 60000/tempo, beatPerMeasure, beatSound);	// Function for all other 7/8 subdivisions
+		} else if (beatPerMeasure === 8 && document.getElementById("subdivision88").selectedIndex === 1){
+			interval = setInterval(createOsc88, 60000/tempo, beatPerMeasure, beatSound);	// Function for 8/8 with 2 + 3 + 3 subdivision
+		}
+		else {
+			interval = setInterval(createOsc8, 60000/tempo, beatPerMeasure, beatSound); 	// Function for standard count for all other beatPerMeasure in 8 meter 
+		}
 	}
 } // end startMetronome()
 
-
-
-
-function stopMetronome() {
+function stopMetronome() {																	// Stops any running setInterval function and clears count display
 	document.getElementById("overlay").innerHTML = "";
 	clearInterval(interval);
 }
 
-
-
-
-function eventSS() {
-	if (started === false) {
+function eventSS() {																		// Calls the startMetronome or stopMetronome Functions and
+	if (started === false) {																// displays or hides the overlay div
 		started = true;
 		document.getElementById("overlay").style.display = "block";
-		document.getElementById("eventButton").innerHTML = "Stop";
 		startMetronome();
 	} else {
 		started = false;
 		document.getElementById("overlay").style.display = "none";
-		document.getElementById("eventButton").innerHTML = "Start";
 		stopMetronome();
 	}
 }
 
+document.getElementById("eventButton").onclick = eventSS;									// Calls eventSS when Start button is clicked or overlay div is clicked
 
-
-document.getElementById("eventButton").onclick = eventSS;
-
-document.body.onkeyup = function(e){
+document.body.onkeyup = function(e){														// Calls eventSS when spacebar is pressed
     if(e.keyCode == 32){
         eventSS();
     }
