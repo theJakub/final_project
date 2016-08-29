@@ -32,7 +32,7 @@
 		<div class="row">
 			<div class="text2 col-md-6 col-xs-12">Time Signature</div>		
 			<div class="timeSigBox col-md-6 col-xs-12">
-				<select id="timeSigTop" onchange="onChangeSignature();">
+				<select id="timeSigTop" class="form-control" onchange="onChangeSignature();">
 					<option>1</option>
 					<option>2</option>
 					<option>3</option>
@@ -50,7 +50,7 @@
 					<option>15</option>
 				</select>
 				/
-				<select id="timeSigBot"onchange="onChangeSignature();"> <!-- timeSigBot = this.selectedIndex; -->
+				<select id="timeSigBot" class="form-control" onchange="onChangeSignature();"> <!-- timeSigBot = this.selectedIndex; -->
 					<option>4</option>
 					<option>8</option>
 				</select>
@@ -60,7 +60,7 @@
 		<br>
 		<div class="row">
 			<div class="text2 col-md-6 col-xs-12">Sound Style
-				<select id="soundSelector">
+				<select id="soundSelector" class="form-control">
 					<option>Standard</option>
 					<option>Smooth</option>
 					<option>Sharp</option>
@@ -69,34 +69,56 @@
 				</select>
 			</div>
 			<div class="text2 col-md-6 col-xs-12">Subdivision
-				<select id="subdivision4">
+				<select id="subdivision4" class="form-control">
 				<!-- class="form-control" this makes it too wide, but it looks nice and is taller -->
 					<option>Quarter Notes</option>
 					<option>Eighth Notes</option>
 					<option>Sixteenth Notes</option>
 					<option>Triplets</option>
 				</select>
-				<select id="subdivision85">
+				<select id="subdivision85" class="form-control">
 					<option>3 + 2</option>
 					<option>2 + 3</option>
 				</select>
-				<select id="subdivision87">
+				<select id="subdivision87" class="form-control">
 					<option>3 + 2 + 2</option>
 					<option>2 + 2 + 3</option>
 					<option>3 + 4</option>
 					<option>4 + 3</option>
 				</select>
-				<select id="subdivision88">
+				<select id="subdivision88" class="form-control">
 					<option>3 + 3 + 2</option>
 					<option>2 + 3 + 3</option>
 				</select>
-				<select id="subdivision89">
+				<select id="subdivision89" class="form-control">
 					<option>3 + 3 + 3</option>
 					<option>4 + 5</option>
 					<option>5 + 4</option>
 				</select>
-
-				<select id="subdivision8na">
+				<select id="subdivision810" class="form-control">
+					<option>3 + 3 + 2 + 2</option>
+					<option>2 + 2 + 3 + 3</option>
+					<option>3 + 2 + 2 + 3</option>
+					<option>2 + 3 + 3 + 2</option>
+				</select>
+				<select id="subdivision811" class="form-control">
+					<option>5 + 6</option>
+					<option>6 + 5</option>
+				</select>
+				<select id="subdivision813" class="form-control">
+					<option>6 + 7</option>
+					<option>7 + 6</option>
+				</select>
+				<select id="subdivision814" class="form-control">
+					<option>3 + 2 + 2 + 2 + 2 + 3</option>
+					<option>2 + 2 + 3 + 3 + 2 + 2</option>
+				</select>
+				<select id="subdivision815" class="form-control">
+					<option>3 + 3 + 3 + 3 + 3</option>
+					<option>7 + 8</option>
+					<option>8 + 7</option>
+				</select>
+				<select id="subdivision8na" class="form-control">
 					<option>N/A</option>
 				</select>
 			</div>
