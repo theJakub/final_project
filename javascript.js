@@ -4,6 +4,10 @@ var interval;																			// For starting and stoping the setInterval func
 var started = false;																	// For the event function to know whether to start or stop the metronome
 var beatCount;																			// To keep track of the beats for the sound and count display
 
+var	stepAmt;
+var stepCount;
+var stepBeatMod;
+
 function onChangeSignature() {															// Switches the subdivision display based on the time signature chosen
 	document.getElementById("subdivision4").style.display = "none";						// The logic checks the time signature and changes the display accordingly
 	document.getElementById("subdivision85").style.display = "none";
@@ -15,7 +19,6 @@ function onChangeSignature() {															// Switches the subdivision display
 	document.getElementById("subdivision813").style.display = "none";
 	document.getElementById("subdivision814").style.display = "none";
 	document.getElementById("subdivision815").style.display = "none";
-
 	document.getElementById("subdivision8na").style.display = "none";
 
 	if (document.getElementById("timeSigBot").selectedIndex === 1) {
@@ -806,7 +809,9 @@ function startMetronome() {																	// Checks user inputs and starts the
 	var speed;
 	var notesPerMeasure;
 	var beatPerMeasure = (document.getElementById("timeSigTop").selectedIndex) + 1;
+	
 	if (document.getElementById("timeSigBot").selectedIndex === 0) {						// Logic for subdivisions for 4 meter time signatures 
+		
 		if (document.getElementById("subdivision4").selectedIndex === 0) {
 			notesPerMeasure = beatPerMeasure;
 			speed = tempo;
@@ -868,7 +873,7 @@ function startMetronome() {																	// Checks user inputs and starts the
 				accArr = [ 2, 5, 8 ];
 			}
 
-			interval = setInterval(createOsc810, 60000/tempo, beatPerMeasure, beatSound, accArr);	// Function for 10/8 in all subdivisions
+			interval = setInterval(createOsc814, 60000/tempo, beatPerMeasure, beatSound, accArr);	// Function for 10/8 in all subdivisions
 		
 		} else if (beatPerMeasure === 14) {
 			
@@ -894,11 +899,13 @@ function stopMetronome() {																	// Stops any running setInterval func
 function eventSS() {																		// Calls the startMetronome or stopMetronome Functions and
 	if (started === false) {																// displays or hides the overlay div
 		started = true;
+		document.getElementById("container").style.display = "none";
 		document.getElementById("overlay").style.display = "block";
 		startMetronome();
 	} else {
 		started = false;
 		document.getElementById("overlay").style.display = "none";
+		document.getElementById("container").style.display = "block";
 		stopMetronome();
 	}
 }
